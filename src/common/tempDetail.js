@@ -1,6 +1,8 @@
-import {View, Text} from 'react-native';
+import {View, Text, Image, Dimensions} from 'react-native';
 
 import {tempData} from '../dummyData/Data';
+
+const {width, height} = Dimensions.get('window');
 
 function TempDetail({styles}) {
   return (

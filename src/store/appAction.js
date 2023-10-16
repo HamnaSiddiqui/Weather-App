@@ -6,7 +6,7 @@ export async function ApiCalls() {
     'Content-Type': 'application/json',
   };
   const params = {
-    key: '14a7fa33d9db4af79a451529231310',
+    key: '7edf20b171e74657a4a50643231610',
     q: 'Pakistan',
     aqi: 'no',
     days: 7,
@@ -23,6 +23,8 @@ export async function ApiCalls() {
       temp: current.temp_c,
       text: current.condition?.text,
       forecast: forecast.forecastday[0]?.date,
+      wind: forecast.forecastday[0].day.maxwind_kph,
+      days: forecast.forecastday,
     };
 
     if (response?.data) {

@@ -1,5 +1,4 @@
 import {View, Text, Pressable, FlatList} from 'react-native';
-import {useSelector} from 'react-redux';
 
 import {forecastData} from '../../dummyData/Data';
 import {styles} from './styles';
@@ -8,26 +7,28 @@ import {ImageUtils} from '../../utils/imageUtils';
 import {ApiCalls} from '../../store/appAction';
 import {apiResponse} from '../../store/responseSlice';
 import {useEffect} from 'react';
-import {useDispatch} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 
 function forecastsList(item) {
   return (
     <View style={styles.items}>
-      <Text style={styles.day}>{item.day}</Text>
-      <View style={styles.rightData}>
+      <Text style={styles.day}>{item.dates}</Text>
+      {/* <View style={styles.rightData}>
         {ImageUtils.day}
         <Text style={styles.dayText}>
           {item.dayTemp}
           {'\u00b0'}
         </Text>
-      </View>
+      </View> */}
     </View>
   );
 }
 
 function ForecastScreen({navigation}) {
-  const forecasts = useSelector(state => state.currentWeatherData);
-  console.log('forecasts', forecasts);
+  const forecasts = useSelector(
+    state => state.currentWeatherData.currentWeather,
+  );
+  console.log('forecasts: ', forecasts);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -36,13 +37,25 @@ function ForecastScreen({navigation}) {
     });
   }, []);
 
+  let weekDays = [];
+  for (day of forecasts.days) {
+    console.log('dates: ', day.date);
+    weekDays.push(day.date);
+  }
+
+  const forecastsData = weekDays.map(date => {
+    return {dates: date};
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
         <Pressable onPress={() => navigation.goBack()}>
           {ImageUtils.back}
         </Pressable>
-        <Text style={styles.heading}>Location</Text>
+        <Text style={styles.heading}>
+          {forecasts.region},{forecasts.country}
+        </Text>
       </View>
       <Text style={styles.next7Days}>Next 7 Days</Text>
       <View style={styles.indexChart}>
@@ -57,7 +70,7 @@ function ForecastScreen({navigation}) {
         </View>
       </View>
       <FlatList
-        data={forecastData}
+        data={forecastsData}
         keyExtractor={(item, index) => {
           return index;
         }}

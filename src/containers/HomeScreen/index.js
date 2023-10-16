@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
+  Image,
 } from 'react-native';
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,8 +25,30 @@ function HomeScreen({navigation}) {
   const res = useSelector(state => state.currentWeatherData.currentWeather);
   console.log('testt: ', res);
   const [showText, setShowText] = useState(false);
-  // const [response, setResponse] = useState();
   const dispatch = useDispatch();
+
+  let weekDays = [];
+  for (day of res.days) {
+    console.log('dates: ', day.date);
+    weekDays.push(day.date);
+  }
+  let weekTemp = [];
+  for (day of res.days) {
+    console.log('day-temps: ', day.day.avgtemp_c);
+    weekTemp.push(day.day.avgtemp_c);
+  }
+  let tempIcon = [];
+  for (day of res.days) {
+    tempIcon.push(day.day.condition.icon);
+  }
+
+  const forecastsData = [
+    {
+      dates: weekDays,
+      temps: weekTemp,
+      icon: tempIcon,
+    },
+  ];
 
   function menuHandler() {
     setShowText(!showText);
@@ -38,19 +61,25 @@ function HomeScreen({navigation}) {
 
   useEffect(() => {
     ApiCalls().then(async response => {
-      await dispatch(apiResponse(response));
+      const resp = await dispatch(apiResponse(response));
+      console.log(forecastsData.dates);
+      // console.log('resp: ', resp.payload.days);
+      // let weekDays = [];
+      // for (day of resp.payload.days) {
+      //   weekDays.push(day.date);
+      // }
     });
   }, []);
 
   function dayDataHandler(item) {
     return (
       <View style={styles.timelyData}>
-        {item.image}
-        <Text style={styles.degree}>
-          {item.deg}
+        {/* <Image source={require(item.icon)} style={{width: 20, height: 20}} /> */}
+        <Text style={[styles.degree, {paddingHorizontal: 20}]}>
+          {item.temps}
           {'\u00b0'}
         </Text>
-        <Text style={styles.time}>{item.time}</Text>
+        {/* <Text style={styles.time}>{item.dates}</Text> */}
       </View>
     );
   }
@@ -67,9 +96,9 @@ function HomeScreen({navigation}) {
               </TouchableOpacity>
               <View style={styles.headerinnerCont}>
                 <Text style={styles.text} numberOfLines={1}>
-                  {/* {res.region},{res.country} */}
+                  {res.region},{res.country}
                 </Text>
-                {/* <Text style={styles.headerDate}>{res.localtime}</Text> */}
+                <Text style={styles.headerDate}>{res.localtime}</Text>
               </View>
             </View>
             {showText && (
@@ -80,12 +109,12 @@ function HomeScreen({navigation}) {
               </View>
             )}
             <View style={styles.mainTemp}>
-              {/* <Text style={styles.temp}>{res.temp}</Text> */}
+              <Text style={styles.temp}>{res.temp}</Text>
               <Text style={{fontSize: height * 0.1, color: colors.white}}>
                 {'\u00b0'}
               </Text>
             </View>
-            {/* <Text style={{fontSize: 20, color: 'white'}}>{res.text}</Text> */}
+            <Text style={{fontSize: 20, color: 'white'}}>{res.text}</Text>
           </View>
         </View>
         <View style={styles.footer}>
@@ -100,7 +129,7 @@ function HomeScreen({navigation}) {
           </View>
           <View style={styles.outerTimelyComtainer}>
             <FlatList
-              data={dayData}
+              data={forecastsData}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => index}
