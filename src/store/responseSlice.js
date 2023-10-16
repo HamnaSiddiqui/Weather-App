@@ -3,7 +3,14 @@ import {createSlice} from '@reduxjs/toolkit';
 const responseSlice = createSlice({
   name: 'response',
   initialState: {
-    currentWeather: null,
+    currentWeather: {
+      region: '',
+      country: '',
+      localtime: '',
+      temp: '',
+      text: '',
+      forecast: [],
+    },
     error: null,
   },
   reducers: {

@@ -12,14 +12,14 @@ import {useSelector, useDispatch} from 'react-redux';
 function forecastsList(item) {
   return (
     <View style={styles.items}>
-      <Text style={styles.day}>{item.dates}</Text>
-      {/* <View style={styles.rightData}>
-        {ImageUtils.day}
+      <Text style={styles.day}>{item.date}</Text>
+      <View style={styles.rightData}>
+        {/* {ImageUtils.day} */}
         <Text style={styles.dayText}>
-          {item.dayTemp}
+          {item.day.avgtemp_c}
           {'\u00b0'}
         </Text>
-      </View> */}
+      </View>
     </View>
   );
 }
@@ -36,16 +36,6 @@ function ForecastScreen({navigation}) {
       await dispatch(apiResponse(response));
     });
   }, []);
-
-  let weekDays = [];
-  for (day of forecasts.days) {
-    console.log('dates: ', day.date);
-    weekDays.push(day.date);
-  }
-
-  const forecastsData = weekDays.map(date => {
-    return {dates: date};
-  });
 
   return (
     <View style={styles.container}>
@@ -70,7 +60,7 @@ function ForecastScreen({navigation}) {
         </View>
       </View>
       <FlatList
-        data={forecastsData}
+        data={forecasts.forecast}
         keyExtractor={(item, index) => {
           return index;
         }}

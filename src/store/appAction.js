@@ -22,9 +22,7 @@ export async function ApiCalls() {
       localtime: location.localtime,
       temp: current.temp_c,
       text: current.condition?.text,
-      forecast: forecast.forecastday[0]?.date,
-      wind: forecast.forecastday[0].day.maxwind_kph,
-      days: forecast.forecastday,
+      forecast: forecast.forecastday,
     };
 
     if (response?.data) {

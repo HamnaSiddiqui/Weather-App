@@ -11,7 +11,6 @@ import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {colors} from '../../theme/colors';
-import {dayData} from '../../dummyData/Data';
 import {logout} from '../../store/loginSlice';
 import {styles} from './styles';
 import {ImageUtils} from '../../utils/imageUtils';
@@ -23,32 +22,9 @@ const {height} = Dimensions.get('window');
 
 function HomeScreen({navigation}) {
   const res = useSelector(state => state.currentWeatherData.currentWeather);
-  console.log('testt: ', res);
+  // console.log('testt: ', res.forecast);
   const [showText, setShowText] = useState(false);
   const dispatch = useDispatch();
-
-  let weekDays = [];
-  for (day of res.days) {
-    console.log('dates: ', day.date);
-    weekDays.push(day.date);
-  }
-  let weekTemp = [];
-  for (day of res.days) {
-    console.log('day-temps: ', day.day.avgtemp_c);
-    weekTemp.push(day.day.avgtemp_c);
-  }
-  let tempIcon = [];
-  for (day of res.days) {
-    tempIcon.push(day.day.condition.icon);
-  }
-
-  const forecastsData = [
-    {
-      dates: weekDays,
-      temps: weekTemp,
-      icon: tempIcon,
-    },
-  ];
 
   function menuHandler() {
     setShowText(!showText);
@@ -59,27 +35,33 @@ function HomeScreen({navigation}) {
     navigation.replace('login');
   }
 
+  let hours = [];
+  for (let hr of res.forecast) {
+    for (let time of hr.hour) {
+      hours.push(time);
+    }
+  }
+  console.log('hours: ', hours);
+
   useEffect(() => {
     ApiCalls().then(async response => {
-      const resp = await dispatch(apiResponse(response));
-      console.log(forecastsData.dates);
-      // console.log('resp: ', resp.payload.days);
-      // let weekDays = [];
-      // for (day of resp.payload.days) {
-      //   weekDays.push(day.date);
-      // }
+      await dispatch(apiResponse(response));
     });
   }, []);
 
   function dayDataHandler(item) {
+    console.log('item', item.time);
     return (
       <View style={styles.timelyData}>
-        {/* <Image source={require(item.icon)} style={{width: 20, height: 20}} /> */}
-        <Text style={[styles.degree, {paddingHorizontal: 20}]}>
-          {item.temps}
+        {/* <Image
+          source={{uri: item.day.condition.icon}}
+          style={{width: 20, height: 30}}
+        /> */}
+        <Text style={styles.degree}>
+          {item.time}
           {'\u00b0'}
         </Text>
-        {/* <Text style={styles.time}>{item.dates}</Text> */}
+        {/* <Text style={styles.time}>{item.hour[0].time}</Text> */}
       </View>
     );
   }
@@ -129,7 +111,7 @@ function HomeScreen({navigation}) {
           </View>
           <View style={styles.outerTimelyComtainer}>
             <FlatList
-              data={forecastsData}
+              data={hours}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => index}
