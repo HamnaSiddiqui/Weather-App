@@ -15,11 +15,11 @@ function forecastsList(item) {
     <View style={styles.items}>
       <Text style={styles.day}>{item.date}</Text>
       <View style={styles.rightData}>
-        {/* <Image
-          source={{uri: item.day.condition.icon}}
-          style={{width: width * 0.04, height: height * 0.07}}
-        /> */}
-        
+        <Image
+          source={{uri: 'https:' + item.day.condition.icon}}
+          style={{width: width * 0.1, height: height * 0.07}}
+        />
+
         <Text style={styles.dayText}>
           {item.day.avgtemp_c}
           {'\u00b0'}

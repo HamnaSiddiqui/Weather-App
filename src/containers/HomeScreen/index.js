@@ -25,8 +25,8 @@ function HomeScreen({navigation}) {
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
-  const day = String(currentDate.getDate()).padStart(2, '0');
+  const month = String(currentDate.getMonth() + 1); // Month is 0-indexed, so add 1
+  const day = String(currentDate.getDate());
 
   const formattedDate = `${year}-${month}-${day}`;
   console.log(formattedDate);
@@ -43,13 +43,14 @@ function HomeScreen({navigation}) {
     navigation.replace('login');
   }
 
-  let hours = [];
-  for (let hr of res.forecast) {
-    for (let time of hr.hour) {
-      hours.push(time);
-    }
-  }
-  // console.log('hours: ', hours);
+  // let hours = [];
+  // for (let hr of res.forecast) {
+  //   hours.push(hr);
+  // }
+
+  const filteredForecast = res.forecast.filter(d => d.date === formattedDate);
+
+  console.log('this is filtered: ', filteredForecast[0].hour);
 
   useEffect(() => {
     ApiCalls().then(async response => {
@@ -63,7 +64,7 @@ function HomeScreen({navigation}) {
       <View style={styles.timelyData}>
         <Image
           source={{uri: 'https:' + item.condition.icon}}
-          style={{width: width * 0.05, height: height * 0.06}}
+          style={{width: width * 0.1, height: height * 0.06}}
         />
         <Text style={styles.degree}>
           {item.temp_c}
@@ -124,7 +125,7 @@ function HomeScreen({navigation}) {
           </View>
           <View style={styles.outerTimelyComtainer}>
             <FlatList
-              data={res.forecast.filter.hour}
+              data={res.forecast.filter(d => d.date === formattedDate)[0].hour}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => index}

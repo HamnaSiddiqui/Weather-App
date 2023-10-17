@@ -10,6 +10,7 @@ const responseSlice = createSlice({
       temp: '',
       text: '',
       forecast: [],
+      current: {},
     },
     error: null,
   },
