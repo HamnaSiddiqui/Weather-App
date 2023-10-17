@@ -18,11 +18,19 @@ import TempDetail from '../../common/tempDetail';
 import {ApiCalls} from '../../store/appAction';
 import {apiResponse} from '../../store/responseSlice';
 
-const {height} = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 function HomeScreen({navigation}) {
   const res = useSelector(state => state.currentWeatherData.currentWeather);
-  // console.log('testt: ', res.forecast);
+
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
+  const day = String(currentDate.getDate()).padStart(2, '0');
+
+  const formattedDate = `${year}-${month}-${day}`;
+  console.log(formattedDate);
+
   const [showText, setShowText] = useState(false);
   const dispatch = useDispatch();
 
@@ -41,7 +49,7 @@ function HomeScreen({navigation}) {
       hours.push(time);
     }
   }
-  console.log('hours: ', hours);
+  // console.log('hours: ', hours);
 
   useEffect(() => {
     ApiCalls().then(async response => {
@@ -50,18 +58,23 @@ function HomeScreen({navigation}) {
   }, []);
 
   function dayDataHandler(item) {
-    console.log('item', item.time);
+    // console.log('item', item.time);
     return (
       <View style={styles.timelyData}>
-        {/* <Image
-          source={{uri: item.day.condition.icon}}
-          style={{width: 20, height: 30}}
-        /> */}
+        <Image
+          source={{uri: 'https:' + item.condition.icon}}
+          style={{width: width * 0.05, height: height * 0.06}}
+        />
         <Text style={styles.degree}>
-          {item.time}
+          {item.temp_c}
           {'\u00b0'}
         </Text>
-        {/* <Text style={styles.time}>{item.hour[0].time}</Text> */}
+        <View style={styles.outerView}>
+          <Text style={styles.tempText} numberOfLines={2}>
+            {item.condition.text}
+          </Text>
+        </View>
+        <Text style={styles.time}>{item.time}</Text>
       </View>
     );
   }
@@ -100,7 +113,7 @@ function HomeScreen({navigation}) {
           </View>
         </View>
         <View style={styles.footer}>
-          <TempDetail styles={styles.tempDetail} />
+          <TempDetail styles={styles.tempDetail} styles1={{color: 'white'}} />
           <View style={styles.listContainer}>
             <Text style={{color: '#015E7E', fontSize: 18, fontWeight: 'bold'}}>
               Today
@@ -111,7 +124,7 @@ function HomeScreen({navigation}) {
           </View>
           <View style={styles.outerTimelyComtainer}>
             <FlatList
-              data={hours}
+              data={res.forecast.filter.hour}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => index}

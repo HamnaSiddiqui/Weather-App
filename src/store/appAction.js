@@ -23,6 +23,7 @@ export async function ApiCalls() {
       temp: current.temp_c,
       text: current.condition?.text,
       forecast: forecast.forecastday,
+      current: current,
     };
 
     if (response?.data) {

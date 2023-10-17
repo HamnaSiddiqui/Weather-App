@@ -106,6 +106,7 @@ export const styles = StyleSheet.create({
   timelyData: {
     marginHorizontal: width * 0.05,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   degree: {
     color: '#015E7E',
@@ -135,5 +136,16 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: width * 0.07,
+  },
+  tempText: {
+    color: '#F8A13F',
+    // fontWeight: 'bold',
+    fontSize: 12,
+    width: width * 0.2,
+  },
+  outerView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    // backgroundColor: 'red',
   },
 });

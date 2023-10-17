@@ -1,20 +1,25 @@
-import {View, Text, Pressable, FlatList} from 'react-native';
+import {View, Text, Pressable, FlatList, Image, Dimensions} from 'react-native';
+import {useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 
-import {forecastData} from '../../dummyData/Data';
 import {styles} from './styles';
-import {tempData} from '../../dummyData/Data';
 import {ImageUtils} from '../../utils/imageUtils';
 import {ApiCalls} from '../../store/appAction';
 import {apiResponse} from '../../store/responseSlice';
-import {useEffect} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import TempDetail from '../../common/tempDetail';
+
+const {width, height} = Dimensions.get('window');
 
 function forecastsList(item) {
   return (
     <View style={styles.items}>
       <Text style={styles.day}>{item.date}</Text>
       <View style={styles.rightData}>
-        {/* {ImageUtils.day} */}
+        {/* <Image
+          source={{uri: item.day.condition.icon}}
+          style={{width: width * 0.04, height: height * 0.07}}
+        /> */}
+        
         <Text style={styles.dayText}>
           {item.day.avgtemp_c}
           {'\u00b0'}
@@ -28,7 +33,7 @@ function ForecastScreen({navigation}) {
   const forecasts = useSelector(
     state => state.currentWeatherData.currentWeather,
   );
-  console.log('forecasts: ', forecasts);
+  console.log('forecasts: ', forecasts.current.wind_kph);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -50,13 +55,7 @@ function ForecastScreen({navigation}) {
       <Text style={styles.next7Days}>Next 7 Days</Text>
       <View style={styles.indexChart}>
         <View style={styles.tempDetail}>
-          {tempData.map(data => (
-            <View key={data.id} style={styles.tempDataContainer}>
-              {data.image}
-              <Text style={styles.temperature}>{data.temp}</Text>
-              <Text style={styles.dataPercent}>{data.percent}</Text>
-            </View>
-          ))}
+          <TempDetail styles={styles.tempDetail} styles1={{color: 'black'}} />
         </View>
       </View>
       <FlatList
