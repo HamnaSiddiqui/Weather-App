@@ -36,6 +36,7 @@ function HomeScreen({navigation}) {
 
   function menuHandler() {
     setShowText(!showText);
+    navigation.navigate('settings');
   }
 
   function logoutHandler() {
@@ -50,7 +51,7 @@ function HomeScreen({navigation}) {
 
   const filteredForecast = res.forecast.filter(d => d.date === formattedDate);
 
-  console.log('this is filtered: ', filteredForecast[0].hour);
+  // console.log('this is filtered: ', filteredForecast[0].hour);
 
   useEffect(() => {
     ApiCalls().then(async response => {
