@@ -45,7 +45,7 @@ function LoginScreen({navigation}) {
           <Text style={{color: 'red', fontSize: 15}}>Invalid Credentials!</Text>
         </View>
       ) : null}
-      <TouchableOpacity onPress={() => navigation.navigate('home')}>
+      <TouchableOpacity onPress={loginHandler}>
         <Text style={styles.signinText}>Sign In</Text>
       </TouchableOpacity>
     </View>

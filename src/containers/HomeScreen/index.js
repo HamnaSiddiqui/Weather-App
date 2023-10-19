@@ -11,47 +11,53 @@ import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {colors} from '../../theme/colors';
-import {logout} from '../../store/loginSlice';
 import {styles} from './styles';
 import {ImageUtils} from '../../utils/imageUtils';
 import TempDetail from '../../common/tempDetail';
 import {ApiCalls} from '../../store/appAction';
 import {apiResponse} from '../../store/responseSlice';
+import {logout} from '../../store/loginSlice';
+import ModalScreen from '../../modals/modal';
 
 const {width, height} = Dimensions.get('window');
 
 function HomeScreen({navigation}) {
   const res = useSelector(state => state.currentWeatherData.currentWeather);
+  console.log('res: ', res.current);
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1); // Month is 0-indexed, so add 1
+  const month = String(currentDate.getMonth() + 1);
   const day = String(currentDate.getDate());
 
   const formattedDate = `${year}-${month}-${day}`;
-  console.log(formattedDate);
 
   const [showText, setShowText] = useState(false);
   const dispatch = useDispatch();
+  const [hour, setHour] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    const filteredForecast = res.forecast.filter(d => d.date === formattedDate);
+    if (filteredForecast.length > 0) {
+      setHour(filteredForecast[0].hour);
+    }
+  }, [res.forecast]);
+
+  function modalHandler() {
+    console.log('modal is clicked');
+    setModalVisible(!modalVisible);
+  }
 
   function menuHandler() {
     setShowText(!showText);
-    navigation.navigate('settings');
+    // navigation.navigate('set');
   }
 
   function logoutHandler() {
     dispatch(logout());
-    navigation.replace('login');
+    navigation.navigate('login');
   }
-
-  // let hours = [];
-  // for (let hr of res.forecast) {
-  //   hours.push(hr);
-  // }
-
-  const filteredForecast = res.forecast.filter(d => d.date === formattedDate);
-
-  // console.log('this is filtered: ', filteredForecast[0].hour);
 
   useEffect(() => {
     ApiCalls().then(async response => {
@@ -60,7 +66,6 @@ function HomeScreen({navigation}) {
   }, []);
 
   function dayDataHandler(item) {
-    // console.log('item', item.time);
     return (
       <View style={styles.timelyData}>
         <Image
@@ -88,7 +93,7 @@ function HomeScreen({navigation}) {
         <View>
           <View style={styles.innerContainer}>
             <View style={styles.headerContainer}>
-              <TouchableOpacity onPress={menuHandler}>
+              <TouchableOpacity onPress={modalHandler}>
                 {ImageUtils.dots}
               </TouchableOpacity>
               <View style={styles.headerinnerCont}>
@@ -98,12 +103,13 @@ function HomeScreen({navigation}) {
                 <Text style={styles.headerDate}>{res.localtime}</Text>
               </View>
             </View>
-            {showText && (
-              <View style={styles.menu}>
-                <TouchableOpacity onPress={logoutHandler}>
-                  <Text style={{color: 'white', fontSize: 15}}>Logout</Text>
-                </TouchableOpacity>
-              </View>
+            {modalVisible && (
+              <ModalScreen
+                isVisible={modalVisible}
+                modalHandler={modalHandler}
+                logout={logoutHandler}
+                setState={setModalVisible}
+              />
             )}
             <View style={styles.mainTemp}>
               <Text style={styles.temp}>{res.temp}</Text>
@@ -126,7 +132,7 @@ function HomeScreen({navigation}) {
           </View>
           <View style={styles.outerTimelyComtainer}>
             <FlatList
-              data={res.forecast.filter(d => d.date === formattedDate)[0].hour}
+              data={hour}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => index}
