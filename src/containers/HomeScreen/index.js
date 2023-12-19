@@ -61,8 +61,11 @@ function HomeScreen({navigation}) {
 
   useEffect(() => {
     ApiCalls().then(async response => {
+      await dispatch({type: 'FETCH_WEATHER_DATA'});
       await dispatch(apiResponse(response));
     });
+    // const testing = dispatch({type: 'FETCH_WEATHER_DATA'});
+    // console.log('testing it ##########: ', testing);
   }, []);
 
   function dayDataHandler(item) {
